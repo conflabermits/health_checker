@@ -16,7 +16,7 @@ type ResultDetails struct {
 	Response string
 }
 
-func main() {
+func web() {
 
 	port := flag.String("port", "8080", "Port to run the local web server")
 	flag.Parse()

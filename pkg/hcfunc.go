@@ -8,12 +8,6 @@ import (
 	"time"
 )
 
-type Options struct {
-	HostHeader string
-	Url        string
-	Depth      string
-}
-
 type ShortOutput struct {
 	Name       string `json:"name"`
 	StatusCode string `json:"statusCode"`

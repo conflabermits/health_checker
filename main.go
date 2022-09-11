@@ -8,8 +8,14 @@ import (
 	"github.com/conflabermits/health_checker/hcfunc"
 )
 
-func parseArgs() (*hcfunc.Options, error) {
-	options := &hcfunc.Options{}
+type Options struct {
+	HostHeader string
+	Url        string
+	Depth      string
+}
+
+func parseArgs() (*Options, error) {
+	options := &Options{}
 
 	flag.StringVar(&options.HostHeader, "hostHeader", "", "override Host specified in URL")
 	flag.StringVar(&options.Url, "url", "", "url to check")

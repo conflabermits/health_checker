@@ -12,6 +12,7 @@ type Options struct {
 	HostHeader string
 	Url        string
 	Depth      string
+	Port       string
 }
 
 func parseArgs() (*Options, error) {
@@ -20,6 +21,7 @@ func parseArgs() (*Options, error) {
 	flag.StringVar(&options.HostHeader, "hostHeader", "", "override Host specified in URL")
 	flag.StringVar(&options.Url, "url", "", "url to check")
 	flag.StringVar(&options.Depth, "depth", "dynamic", "Determine amount/type of data to return")
+	flag.StringVar(&options.Port, "port", "8080", "Port to run the local web server")
 	flag.Usage = func() {
 		fmt.Printf("Usage: health_checker-go [options]\n\n")
 		flag.PrintDefaults()

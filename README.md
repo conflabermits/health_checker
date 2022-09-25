@@ -12,4 +12,80 @@ It also has a web server mode where it can start up a simple HTTP server that wi
 
 ## Usage Instructions
 
-Usage instructions *coming soon*
+Help text:
+
+```bash
+$ go run main.go -help
+Usage: health_checker-go [options]
+
+  -depth string
+        Determine amount/type of data to return (default "dynamic")
+  -hostHeader string
+        override Host specified in URL
+  -port string
+        Port to run the local web server (default "8080")
+  -url string
+        url to check
+```
+
+Depth flag to control amount of detail:
+
+```bash
+$ go run main.go -depth short -url "http://localhost:48080/outage"
+{
+    "name": "appname",
+    "statusCode": "OUTAGE"
+}
+
+$ go run main.go -depth dynamic -url "http://localhost:48080/outage"
+{
+    "broken_components": [
+        {
+            "description": "Most important check",
+            "essential": true,
+            "name": "auth-service",
+            "statusCode": "CRITICAL",
+            "statusText": "Can't reach auth service, returns 500",
+            "uri": "http://localhost:38080/auth-service/health"
+        }
+    ],
+    "name": "appname",
+    "statusCode": "OUTAGE"
+}
+
+$ go run main.go -depth full -url "http://localhost:48080/outage"
+{
+    "components": [
+        {
+            "description": "Most important check",
+            "essential": true,
+            "name": "auth-service",
+            "statusCode": "CRITICAL",
+            "statusText": "Can't reach auth service, returns 500",
+            "uri": "http://localhost:38080/auth-service/health"
+        },
+        {
+            "description": "Less important check",
+            "essential": false,
+            "name": "activity-webservice",
+            "statusCode": "OK",
+            "statusText": null,
+            "uri": "http://localhost:38080/activity-service/health"
+        },
+        {
+            "description": "Some other check",
+            "essential": true,
+            "name": "database",
+            "statusCode": "OK",
+            "statusText": null,
+            "uri": "http://localhost:48080/user-table"
+        }
+    ],
+    "name": "appname",
+    "statusCode": "OUTAGE"
+}
+```
+
+Port to run local web server:
+
+Coming *soon*

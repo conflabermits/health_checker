@@ -3,6 +3,7 @@ package hcfunc
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -79,4 +80,40 @@ func Parse_health_checker_json(jsonString string, depth string) {
 		}
 		fmt.Println(string(full_json))
 	}
+}
+
+type ResultDetails struct {
+	Success  bool
+	URL      string
+	Depth    string
+	Response string
+}
+
+func Web(port string) {
+
+	tmpl := template.Must(template.ParseFiles("index.html"))
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			tmpl.Execute(w, nil)
+			return
+		}
+
+		reqURL := r.FormValue("url")
+		//fmt.Println("Request URL: " + reqURL)
+		reqDepth := r.FormValue("depth")
+		//fmt.Println("Request Depth: " + reqDepth)
+		response := Health_checker_http_req(reqURL, "health_checker_web")
+		//fmt.Println("Response: " + response)
+
+		result := ResultDetails{
+			Success:  true,
+			URL:      reqURL,
+			Depth:    reqDepth,
+			Response: response,
+		}
+		tmpl.Execute(w, result)
+	})
+
+	http.ListenAndServe(":"+port, nil)
 }

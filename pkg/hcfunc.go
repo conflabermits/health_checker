@@ -92,7 +92,7 @@ type ResultDetails struct {
 }
 
 func Web(port string) {
-
+	//Need to fix index.html location, it's not getting included in the binary
 	tmpl := template.Must(template.ParseFiles("index.html"))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

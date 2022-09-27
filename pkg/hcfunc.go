@@ -100,9 +100,9 @@ func Web(port string) {
 		}
 
 		reqURL := r.FormValue("url")
-		//fmt.Println("Request URL: " + reqURL)
+		fmt.Println("Request URL: " + reqURL)
 		reqDepth := r.FormValue("depth")
-		//fmt.Println("Request Depth: " + reqDepth)
+		fmt.Println("Request Depth: " + reqDepth)
 		response := Health_checker_http_req(reqURL, "health_checker_web")
 		//fmt.Println("Response: " + response)
 

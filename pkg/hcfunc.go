@@ -43,10 +43,11 @@ func Health_checker_http_req(url string, hostHeader string) string {
 	}
 }
 
-func Parse_health_checker_json(jsonString string, depth string) {
+func Parse_health_checker_json(jsonString string, depth string) string {
 
 	var jsonMap map[string]interface{}
 	json.Unmarshal([]byte(jsonString), &jsonMap)
+	var response string
 
 	if depth == "dynamic" {
 		comp := jsonMap["components"]
@@ -65,21 +66,22 @@ func Parse_health_checker_json(jsonString string, depth string) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(string(dynamic_json))
+		response = string(dynamic_json)
 	} else if depth == "short" {
 		short_output := ShortOutput{Name: jsonMap["name"].(string), StatusCode: jsonMap["statusCode"].(string)}
 		short_json, err := json.MarshalIndent(short_output, "", "    ")
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(string(short_json))
+		response = string(short_json)
 	} else if depth == "full" {
 		full_json, err := json.MarshalIndent(jsonMap, "", "    ")
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(string(full_json))
+		response = string(full_json)
 	}
+	return response
 }
 
 type ResultDetails struct {
@@ -103,8 +105,9 @@ func Web(port string) {
 		fmt.Println("Request URL: " + reqURL)
 		reqDepth := r.FormValue("depth")
 		fmt.Println("Request Depth: " + reqDepth)
-		response := Health_checker_http_req(reqURL, "health_checker_web")
-		//fmt.Println("Response: " + response)
+		httpResponse := Health_checker_http_req(reqURL, "health_checker_web")
+		response := Parse_health_checker_json(httpResponse, reqDepth)
+		fmt.Println("Response: " + response)
 
 		result := ResultDetails{
 			Success:  true,

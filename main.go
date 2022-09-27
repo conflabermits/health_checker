@@ -47,7 +47,8 @@ func main() {
 
 	if len(options.Url) > 0 {
 		response := hcfunc.Health_checker_http_req(options.Url, options.HostHeader)
-		hcfunc.Parse_health_checker_json(response, options.Depth)
+		output := hcfunc.Parse_health_checker_json(response, options.Depth)
+		fmt.Println(output)
 	}
 
 	if options.Server {

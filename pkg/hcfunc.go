@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -32,7 +32,7 @@ func Health_checker_http_req(url string, hostHeader string) string {
 		if err != nil {
 			return err.Error()
 		} else {
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			defer resp.Body.Close()
 			if err != nil {
 				return err.Error()

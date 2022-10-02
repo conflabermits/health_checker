@@ -1,10 +1,12 @@
 package hcfunc
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
+	"io/fs"
 	"net/http"
 	"time"
 )
@@ -91,10 +93,30 @@ type ResultDetails struct {
 	Response string
 }
 
+/*
+//go:embed static/index.html
+var index []byte
+*/
+//go:embed static
+var content embed.FS
+
 func Web(port string) {
 	//Need to fix index.html location, it's not getting included in the binary
-        //Try using fs.embed to embed the index page
-	tmpl := template.Must(template.ParseFiles("index.html"))
+	//Try using fs.embed to embed the index page
+	/*
+			fsys := fs.FS(content)
+		    html, _ := fs.Sub(fsys, "public")
+		    return http.FileServer(http.FS(html))
+	*/
+	/*
+	 */
+	filesys := fs.FS(content)
+	//index, _ := fs.ReadFile(filesys, "static/index.html")
+	//html, _ := fs.Sub(filesys, "static/index.html")
+	tmpl := template.Must(template.ParseFS(filesys, "static/index.html"))
+	//tmpl := template.Must(template.ParseFiles(index))
+
+	//tmpl := template.Must(template.ParseFiles("index.html"))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {

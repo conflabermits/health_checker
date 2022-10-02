@@ -12,18 +12,30 @@ It also has a web server mode where it can start up a simple HTTP server that wi
 
 ## Usage Instructions
 
+Build it!
+
+```bash
+$ go build -o health_checker-web ./cmd/health_checker-web/web.go
+
+$ go build -o health_checker-go ./cmd/health_checker-go/main.go
+
+$ ls -1 | egrep health_checker
+health_checker-go
+health_checker-web
+```
+
+### CLI program: `health_checker-go`
+
 Help text:
 
 ```bash
-$ go run main.go -help
+$ ./health_checker-go -help
 Usage: health_checker-go [options]
 
   -depth string
         Determine amount/type of data to return (default "dynamic")
   -hostHeader string
         override Host specified in URL
-  -port string
-        Port to run the local web server (default "8080")
   -url string
         url to check
 ```
@@ -31,13 +43,13 @@ Usage: health_checker-go [options]
 Depth flag to control amount of detail:
 
 ```bash
-$ go run main.go -depth short -url "http://localhost:48080/outage"
+$ ./health_checker-go -url "http://localhost:48080/outage" -depth short
 {
     "name": "appname",
     "statusCode": "OUTAGE"
 }
 
-$ go run main.go -depth dynamic -url "http://localhost:48080/outage"
+$ ./health_checker-go -url "http://localhost:48080/outage" -depth dynamic
 {
     "broken_components": [
         {
@@ -53,7 +65,7 @@ $ go run main.go -depth dynamic -url "http://localhost:48080/outage"
     "statusCode": "OUTAGE"
 }
 
-$ go run main.go -depth full -url "http://localhost:48080/outage"
+$ ./health_checker-go -url "http://localhost:48080/outage" -depth full
 {
     "components": [
         {
@@ -86,6 +98,50 @@ $ go run main.go -depth full -url "http://localhost:48080/outage"
 }
 ```
 
-Port to run local web server:
+### Web server program: `health_checker-web`
 
-Coming *soon*
+Help text:
+
+```bash
+$ ./health_checker-web -help
+Usage: health_checker-web [options]
+
+  -port string
+        Port to run the local web server (default "8080")
+```
+
+Run the server (with optional port specification):
+
+```bash
+$ ./health_checker-web -port 38080
+```
+
+Web server displays basic page to enter URL and optionally specify depth:
+
+![health_checker-web UI](images/web1.png "health_checker-web UI")
+
+Enter a URL and click Submit to get back the response:
+
+![health_checker-web response](images/web2.png "health_checker-web response")
+
+Terminal outputs the results from the web UI:
+
+```bash
+$ ./health_checker-web -port 38080
+Request URL: http://localhost:48080/outage
+Request Depth: dynamic
+Response: {
+    "broken_components": [
+        {
+            "description": "Most important check",
+            "essential": true,
+            "name": "auth-service",
+            "statusCode": "CRITICAL",
+            "statusText": "Can't reach auth service, returns 500",
+            "uri": "http://localhost:38080/auth-service/health"
+        }
+    ],
+    "name": "appname",
+    "statusCode": "OUTAGE"
+}
+```
